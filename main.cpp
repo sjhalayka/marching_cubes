@@ -8,9 +8,9 @@ int main(void)
 	float x_grid_min = -x_grid_max;
 	float y_grid_min = -y_grid_max;
 	float z_grid_min = -z_grid_max;
-	size_t x_res = 50;
-	size_t y_res = 50;
-	size_t z_res = 50;
+	size_t x_res = 100;
+	size_t y_res = 100;
+	size_t z_res = 100;
 	bool make_border = true;
 
 	float z_w = 0;
@@ -22,7 +22,7 @@ int main(void)
 	unsigned short int max_iterations = 8;
 	float threshold = 4;
 
-	string equation_text, error_string;
+	string error_string;
 	quaternion_julia_set_equation_parser eqparser;
 	if (false == eqparser.setup("Z = sin(Z) + C * sin(Z)", error_string, C))
 	{
