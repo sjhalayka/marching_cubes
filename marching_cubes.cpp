@@ -302,8 +302,21 @@ namespace marching_cubes
 
 };
 
-vertex_3 marching_cubes::vertex_interp(const float isovalue, const vertex_3 &p1, const vertex_3 &p2, const float valp1, const float valp2)
+vertex_3 marching_cubes::vertex_interp(const float isovalue, vertex_3 p1, vertex_3 p2, float valp1, float valp2)
 {
+	// Sort the vertices so that cracks don't mess up the water-tightness of the mesh.
+	// Note: the cracks don't appear if you use doubles instead of floats.
+	if (p2 < p1)
+	{
+		vertex_3 tempv = p2;
+		p2 = p1;
+		p1 = tempv;
+
+		float tempf = valp2;
+		valp2 = valp1;
+		valp1 = tempf;
+	}
+
 	const float epsilon = 1e-10f;
 
 	if(fabs(isovalue - valp1) < epsilon)
