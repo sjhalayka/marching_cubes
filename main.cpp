@@ -8,9 +8,9 @@ int main(void)
 	float x_grid_min = -x_grid_max;
 	float y_grid_min = -y_grid_max;
 	float z_grid_min = -z_grid_max;
-	size_t x_res = 100;
-	size_t y_res = 100;
-	size_t z_res = 100;
+	size_t x_res = 200;
+	size_t y_res = 200;
+	size_t z_res = 200;
 	bool make_border = true;
 
 	float z_w = 0;
@@ -43,8 +43,6 @@ int main(void)
 
 	size_t z = 0;
 
-	cout << "Calculating xy-plane " << z + 1 << " of " << z_res << endl;
-
 	quaternion Z(x_grid_min, y_grid_min, z_grid_min, z_w);
 
 	// Calculate 0th xy plane.
@@ -70,7 +68,7 @@ int main(void)
 	{
 		Z.x = x_grid_min;
 
-		cout << "Calculating xy-plane " << z + 1 << " of " << z_res << endl;
+		cout << "Calculating triangles from xy-plane pair " << z << " of " << z_res - 1 << endl;
 
 		for (size_t x = 0; x < x_res; x++, Z.x += x_step_size)
 		{
