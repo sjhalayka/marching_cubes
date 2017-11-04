@@ -1,10 +1,14 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 using namespace std;
 
 #include "marching_cubes.h"
 using namespace marching_cubes;
+
+#include "eqparse.h"
+
 
 bool write_triangles_to_binary_stereo_lithography_file(const vector<triangle> &triangles, const char *const file_name)
 {
