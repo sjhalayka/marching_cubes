@@ -101,6 +101,7 @@ int main(void)
 	if (0 < triangles.size())
 		write_triangles_to_binary_stereo_lithography_file(triangles, "out.stl");
 
+	// Print box-counting dimension
 	cout << logf(static_cast<float>(box_count)) / logf(1.0f/step_size) << endl;
 
 
