@@ -2,15 +2,10 @@
 
 int main(void)
 {
-	float x_grid_max = 1.5;
-	float y_grid_max = 1.5;
-	float z_grid_max = 1.5;
-	float x_grid_min = -x_grid_max;
-	float y_grid_min = -y_grid_max;
-	float z_grid_min = -z_grid_max;
-	size_t x_res = 200;
-	size_t y_res = 200;
-	size_t z_res = 200;
+	float grid_max = 1.5;
+	float grid_min = -grid_max;
+	size_t res = 1000;
+
 	bool make_border = true;
 
 	float z_w = 0;
@@ -34,64 +29,68 @@ int main(void)
 	const float border_value = 1.0f + threshold;
 
 	vector<triangle> triangles;
-	vector<float> xyplane0(x_res*y_res, 0);
-	vector<float> xyplane1(x_res*y_res, 0);
+	vector<float> xyplane0(res*res, 0);
+	vector<float> xyplane1(res*res, 0);
 
-	const float x_step_size = (x_grid_max - x_grid_min) / (x_res - 1);
-	const float y_step_size = (y_grid_max - y_grid_min) / (y_res - 1);
-	const float z_step_size = (z_grid_max - z_grid_min) / (z_res - 1);
+	const float step_size = (grid_max - grid_min) / (res - 1);
 
 	size_t z = 0;
 
-	quaternion Z(x_grid_min, y_grid_min, z_grid_min, z_w);
+	quaternion Z(grid_min, grid_min, grid_min, z_w);
 
 	// Calculate 0th xy plane.
-	for (size_t x = 0; x < x_res; x++, Z.x += x_step_size)
+	for (size_t x = 0; x < res; x++, Z.x += step_size)
 	{
-		Z.y = y_grid_min;
+		Z.y = grid_min;
 
-		for (size_t y = 0; y < y_res; y++, Z.y += y_step_size)
+		for (size_t y = 0; y < res; y++, Z.y += step_size)
 		{
-			if (true == make_border && (x == 0 || y == 0 || z == 0 || x == x_res - 1 || y == y_res - 1 || z == z_res - 1))
-				xyplane0[x*y_res + y] = border_value;
+			if (true == make_border && (x == 0 || y == 0 || z == 0 || x == res - 1 || y == res - 1 || z == res - 1))
+				xyplane0[x*res + y] = border_value;
 			else
-				xyplane0[x*y_res + y] = eqparser.iterate(Z, max_iterations, threshold);
+				xyplane0[x*res + y] = eqparser.iterate(Z, max_iterations, threshold);
 		}
 	}
 
 	// Prepare for 1st xy plane.
 	z++;
-	Z.z += z_step_size;
+	Z.z += step_size;
+
+
+
+	size_t box_count = 0;
+
 
 	// Calculate 1st and subsequent xy planes.
-	for (; z < z_res; z++, Z.z += z_step_size)
+	for (; z < res; z++, Z.z += step_size)
 	{
-		Z.x = x_grid_min;
+		Z.x = grid_min;
 
-		cout << "Calculating triangles from xy-plane pair " << z << " of " << z_res - 1 << endl;
+		cout << "Calculating triangles from xy-plane pair " << z << " of " << res - 1 << endl;
 
-		for (size_t x = 0; x < x_res; x++, Z.x += x_step_size)
+		for (size_t x = 0; x < res; x++, Z.x += step_size)
 		{
-			Z.y = y_grid_min;
+			Z.y = grid_min;
 
-			for (size_t y = 0; y < y_res; y++, Z.y += y_step_size)
+			for (size_t y = 0; y < res; y++, Z.y += step_size)
 			{
-				if (true == make_border && (x == 0 || y == 0 || z == 0 || x == x_res - 1 || y == y_res - 1 || z == z_res - 1))
-					xyplane1[x*y_res + y] = border_value;
+				if (true == make_border && (x == 0 || y == 0 || z == 0 || x == res - 1 || y == res - 1 || z == res - 1))
+					xyplane1[x*res + y] = border_value;
 				else
-					xyplane1[x*y_res + y] = eqparser.iterate(Z, max_iterations, threshold);
+					xyplane1[x*res + y] = eqparser.iterate(Z, max_iterations, threshold);
 			}
 		}
 
 		// Calculate triangles for the xy-planes corresponding to z - 1 and z by marching cubes.
 		tesselate_adjacent_xy_plane_pair(
+			box_count,
 			xyplane0, xyplane1,
 			z - 1,
 			triangles,
 			threshold, // Use threshold as isovalue.
-			x_grid_min, x_grid_max, x_res,
-			y_grid_min, y_grid_max, y_res,
-			z_grid_min, z_grid_max, z_res);
+			grid_min, grid_max, res,
+			grid_min, grid_max, res,
+			grid_min, grid_max, res);
 
 		// Swap memory pointers (fast) instead of performing a memory copy (slow).
 		xyplane1.swap(xyplane0);
@@ -101,6 +100,9 @@ int main(void)
 
 	if (0 < triangles.size())
 		write_triangles_to_binary_stereo_lithography_file(triangles, "out.stl");
+
+	cout << logf(static_cast<float>(box_count)) / logf(1.0f/step_size) << endl;
+
 
 	return 0;
 }
