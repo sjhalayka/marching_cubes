@@ -4,7 +4,7 @@ int main(void)
 {
 	float grid_max = 1.5;
 	float grid_min = -grid_max;
-	size_t res = 100;
+	size_t res = 1000;
 
 	bool make_border = true;
 
@@ -103,7 +103,7 @@ int main(void)
 
 	// Print box-counting dimension
 	// Make sure that step_size != 1.0f :)
-	cout << logf(static_cast<float>(box_count)) / logf(1.0f/step_size) << endl;
+	cout << "Box counting dimension: " << logf(static_cast<float>(box_count)) / logf(1.0f/step_size) << endl;
 
 
 	return 0;
