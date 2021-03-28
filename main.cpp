@@ -4,7 +4,7 @@ int main(void)
 {
 	float grid_max = 1.5;
 	float grid_min = -grid_max;
-	size_t res = 1000;
+	size_t res = 100;
 
 	bool make_border = true;
 
