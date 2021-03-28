@@ -38,7 +38,7 @@ int main(void)
 
 	quaternion Z(grid_min, grid_min, grid_min, z_w);
 
-	// Calculate 0th xy plane.
+	// Calculate xy plane 0.
 	for (size_t x = 0; x < res; x++, Z.x += step_size)
 	{
 		Z.y = grid_min;
@@ -52,16 +52,13 @@ int main(void)
 		}
 	}
 
-	// Prepare for 1st xy plane.
+	// Prepare for xy plane 1.
 	z++;
 	Z.z += step_size;
 
-
-
 	size_t box_count = 0;
 
-
-	// Calculate 1st and subsequent xy planes.
+	// Calculate xy planes 1 and greater.
 	for (; z < res; z++, Z.z += step_size)
 	{
 		Z.x = grid_min;
