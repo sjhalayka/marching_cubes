@@ -2,20 +2,20 @@
 
 int main(void)
 {
-	float grid_max = 1.5;
-	float grid_min = -grid_max;
-	size_t res = 100;
+	const float grid_max = 1.5;
+	const float grid_min = -grid_max;
+	const size_t res = 100;
 
-	bool make_border = true;
+	const bool make_border = true;
 
-	float z_w = 0;
+	const float z_w = 0;
 	quaternion C;
 	C.x = 0.3f;
 	C.y = 0.5f;
 	C.z = 0.4f;
 	C.w = 0.2f;
-	unsigned short int max_iterations = 8;
-	float threshold = 4;
+	const unsigned short int max_iterations = 8;
+	const float threshold = 4;
 
 	string error_string;
 	quaternion_julia_set_equation_parser eqparser;
@@ -25,7 +25,7 @@ int main(void)
 		return -1;
 	}
 
-	// When adding a border, use a value that is "much" greater than the threshold.
+	// When adding a border, use a value that is greater than the threshold.
 	const float border_value = 1.0f + threshold;
 
 	vector<triangle> triangles;
