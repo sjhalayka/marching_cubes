@@ -19,11 +19,19 @@ int main(void)
 
 	string error_string;
 	quaternion_julia_set_equation_parser eqparser;
-	if (false == eqparser.setup("Z = sin(Z) + C * sin(Z)", error_string, C))
+	if (false == eqparser.setup("Z = Z*Z + C", error_string, C))
 	{
 		cout << "Equation error: " << error_string << endl;
 		return -1;
 	}
+
+
+	double min_threshold = 0;//threshold * 0.25;
+	double max_threshold = threshold;// *0.25;
+
+	double mid_threshold = (max_threshold + min_threshold) * 0.5;
+
+
 
 	// When adding a border, use a value that is greater than the threshold.
 	const float border_value = 1.0f + threshold;
@@ -46,9 +54,17 @@ int main(void)
 		for (size_t y = 0; y < res; y++, Z.y += step_size)
 		{
 			if (true == make_border && (x == 0 || y == 0 || z == 0 || x == res - 1 || y == res - 1 || z == res - 1))
-				xyplane0[x*res + y] = border_value;
+				xyplane0[x * res + y] = border_value;
 			else
-				xyplane0[x*res + y] = eqparser.iterate(Z, max_iterations, threshold);
+			{
+				if (z < res / 2)
+				{
+					xyplane0[x * res + y] = eqparser.iterate(Z, max_iterations, threshold);
+					xyplane0[x * res + y] = abs(xyplane0[x * res + y] - mid_threshold);
+				}
+				else
+					xyplane0[x * res + y] = border_value;
+			}
 		}
 	}
 
@@ -72,9 +88,17 @@ int main(void)
 			for (size_t y = 0; y < res; y++, Z.y += step_size)
 			{
 				if (true == make_border && (x == 0 || y == 0 || z == 0 || x == res - 1 || y == res - 1 || z == res - 1))
-					xyplane1[x*res + y] = border_value;
+					xyplane1[x * res + y] = border_value;
 				else
-					xyplane1[x*res + y] = eqparser.iterate(Z, max_iterations, threshold);
+				{
+					if (z < res / 2)
+					{
+						xyplane1[x * res + y] = eqparser.iterate(Z, max_iterations, threshold);
+						xyplane1[x * res + y] = abs(xyplane1[x * res + y] - mid_threshold);
+					}
+					else
+						xyplane1[x * res + y] = border_value;
+				}
 			}
 		}
 
@@ -84,7 +108,7 @@ int main(void)
 			xyplane0, xyplane1,
 			z - 1,
 			triangles,
-			threshold, // Use threshold as isovalue.
+			max_threshold - mid_threshold, // Use threshold as isovalue.
 			grid_min, grid_max, res,
 			grid_min, grid_max, res,
 			grid_min, grid_max, res);
